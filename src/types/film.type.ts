@@ -1,6 +1,5 @@
 import type {User} from './user.type.js';
 import type {GenreType} from './genre.enum.js';
-import type {Actors} from './actors.type.js';
 
 export type Film = {
   title: string;
@@ -11,7 +10,7 @@ export type Film = {
   rating: number;
   preview: string;
   video: string;
-  actors: Actors[];
+  actors: string[];
   director: string;
   duration: number;
   commentCount: number;
