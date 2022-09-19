@@ -22,9 +22,9 @@ export default class GenerateCommand implements CliCommandInterface {
     const filmGeneratorString = new FilmGenerator(this.initialData);
     const tsvFileWriter = new TSVFileWriter(filepath);
 
-    for (let i=0; i< filmCount; i++) {
-      await tsvFileWriter.write(filmGeneratorString.generate());
-    }
+    const filmString = [...Array(filmCount)].map(() => filmGeneratorString.generate()).join('\n');
+
+    await tsvFileWriter.write(filmString);
 
     console.log(chalk.greenBright.bold(`File ${chalk.blue(filepath)} was created!`));
   }
