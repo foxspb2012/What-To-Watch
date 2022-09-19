@@ -1,0 +1,115 @@
+{
+  "api": {
+    "titles": [
+      "Лёд",
+      "Оно",
+      "Леон",
+      "Вышка",
+      "Патриот",
+      "Терминатор",
+      "Пятый элемент"
+    ],
+    "descriptions": [
+      "Ветеран войны возглавляет мятеж, героически защищая семью и страну. Драма с Мэлом Гибсоном и Хитом Леджером.",
+      "Фигуристка Надя получает в партнеры хулигана-хоккеиста. Микс спортивной драмы, романтической комедии и мюзикла.",
+      "Профессиональный убийца Леон неожиданно для себя самого решает помочь 12-летней соседке Матильде, семью которой убили коррумпированные полицейские.",
+      "После гибели Дэна в результате падения со скалы его жена Бекки, ранее увлекавшаяся экстремальными развлечениями, впала в депрессию.",
+      "История противостояния солдата Кайла Риза и киборга-терминатора, прибывших в 1984-й год из пост-апокалиптического будущего, где миром правят машины-убийцы.",
+      "Последняя надежда человечества — безалаберный нью-йоркский таксист. Самый обаятельный фильм Люка Бессона",
+      "Злобный клоун терроризирует подростков. Экранизация романа Стивена Кинга с жутким Биллом Скарсгардом"
+    ],
+    "genres": [
+      "comedy",
+      "crime",
+      "documentary",
+      "drama",
+      "horror",
+      "family",
+      "romance",
+      "scifi",
+      "thriller"
+    ],
+    "previews": [
+      "it-preview.jpg",
+      "ice-preview.jpg",
+      "leon-preview.jpg",
+      "tower-preview.jpg",
+      "patriot-preview.jpg",
+      "terminator-preview.jpg",
+      "fifth-preview.jpg"
+    ],
+    "videos": [
+      "it-movie.mpeg4",
+      "ice-movie.mpeg4",
+      "leon-movie.mpeg4",
+      "tower-movie.mpeg4",
+      "patriot-movie.mpeg4",
+      "terminator-movie.mpeg4",
+      "fifth-movie.mpeg4"
+    ],
+    "actors": [
+      "Джейден Мартелл",
+      "Джереми Рэй Тейлор",
+      "София Лиллис",
+      "Элайджа Вуд",
+      "Иэн Маккеллен",
+      "Шон Эстин"
+    ],
+    "directors": [
+      "Скотт Манн",
+      "Люк Бессон",
+      "Питер Джексон",
+      "Джеймс Кемерон",
+      "Роланд Эммерих",
+      "Андрес Мускетти"
+    ],
+    "users": [
+      "Олег Сидоров",
+      "Дима Иванов",
+      "Саша Орлов",
+      "Мария Гомель",
+      "Игорь Мамин"
+    ],
+    "emails": [
+      "president@dka.local",
+      "ivanov@ya.rus",
+      "koshechka@mr.may",
+      "xenonn@inbox.ru",
+      "vip-cadr@aol.lic"
+    ],
+    "avatars": [
+      "https://avatars.dicebear.com/api/micah/784.svg",
+      "https://avatars.dicebear.com/api/micah/5454.svg",
+      "https://avatars.dicebear.com/api/micah/4711.svg",
+      "https://avatars.dicebear.com/api/micah/5247.svg",
+      "https://avatars.dicebear.com/api/micah/32587.svg",
+      "https://avatars.dicebear.com/api/micah/12122121.svg"
+    ],
+    "posters": [
+      "it-poster.jpg",
+      "ice-poster.jpg",
+      "leon-poster.jpg",
+      "tower-poster.jpg",
+      "patriot-poster.jpg",
+      "terminator-poster.jpg",
+      "fifth-poster.jpg"
+    ],
+    "bgImages": [
+      "it-background.jpg",
+      "ice-background.jpg",
+      "leon-background.jpg",
+      "tower-background.jpg",
+      "patriot-background.jpg",
+      "terminator-background.jpg",
+      "fifth-background.jpg"
+    ],
+    "bgColors": [
+      "#5A5353",
+      "#C53F37",
+      "#AF5T47",
+      "#CG4351",
+      "#U5T744",
+      "#BH4A55"
+    ]
+  }
+}
