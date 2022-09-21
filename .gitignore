@@ -10,3 +10,4 @@
 coverage
 *.log
 test-data.tsv
+*.env
