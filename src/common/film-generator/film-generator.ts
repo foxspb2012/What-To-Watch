@@ -1,7 +1,7 @@
 import dayjs from 'dayjs';
 import {MockData} from '../../types/mock-data.type.js';
 import {GenreType} from '../../types/genre.enum.js';
-import {generateRandomValue, getRandomAlphaNumeric, getRandomItem, getRandomItems} from '../../utils/random.js';
+import {generateRandomValue, getRandomItem, getRandomItems} from '../../utils/random.js';
 import {FilmGeneratorInterface} from './film-generator.interface.js';
 
 const FIRST_WEEK_DAY = 1;
@@ -36,13 +36,12 @@ export default class FilmGenerator implements FilmGeneratorInterface {
     const user = getRandomItem<string>(this.mockData.users);
     const email = getRandomItem<string>(this.mockData.emails);
     const avatar = getRandomItem<string>(this.mockData.avatars);
-    const passwordHash = getRandomAlphaNumeric(32);
     const poster = getRandomItem<string>(this.mockData.posters);
     const bgImage = getRandomItem<string>(this.mockData.bgImages);
     const bgColor = getRandomItem<string>(this.mockData.bgColors);
 
     return [title, description, publicationDate, genre, year,
       rating, preview, video, actors, director, duration, commentCount,
-      user, email, avatar, passwordHash, poster, bgImage, bgColor].join('\t');
+      user, email, avatar, poster, bgImage, bgColor].join('\t');
   }
 }

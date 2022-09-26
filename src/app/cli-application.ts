@@ -1,4 +1,4 @@
-import {CliCommandInterface} from '../сli-command/cli-command.interface.js';
+import {CliCommandInterface} from '../cli-command/cli-command.interface.js';
 
 type ParsedCommand = {
   [key: string]: string[]

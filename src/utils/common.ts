@@ -1,10 +1,11 @@
 import {GenreType} from '../types/genre.enum.js';
 import {Film} from '../types/film.type.js';
+import bcrypt from 'bcrypt';
 
 export const createFilm = (row: string) => {
   const tokens = row.replace('\n', '').split('\t');
   const [title, description, date, genre, year, rating, preview, video, actors,
-    director, duration, commentCount, name, email, avatar, passwordHash, poster, backgroundImage, backgroundColor] = tokens;
+    director, duration, commentCount, name, email, avatar, poster, backgroundImage, backgroundColor] = tokens;
   return {
     title,
     description,
@@ -18,7 +19,7 @@ export const createFilm = (row: string) => {
     director,
     duration: Number.parseInt(duration, 10),
     commentCount: Number.parseInt(commentCount, 10),
-    user: {name, email, avatar, passwordHash},
+    user: {name, email, avatar},
     poster,
     backgroundImage,
     backgroundColor,
@@ -28,3 +29,8 @@ export const createFilm = (row: string) => {
 
 export const getErrorMessage = (error: unknown): string =>
   error instanceof Error ? error.message : '';
+
+export const createSHA256 = (password: string, saltRounds: string): string => {
+  const salt = bcrypt.genSaltSync(parseInt(saltRounds, 10));
+  return bcrypt.hashSync(password, salt);
+};
