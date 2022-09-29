@@ -1,0 +1,446 @@
+openapi: "3.0.2"
+info:
+  version: "2.0.0"
+  title: API сервер для проекта "What-To-Watch".
+  description: |-
+    * Список ресурсов и маршрутов сервера "What-To-Watch".
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+tags:
+  - name: users
+    description: Действия с пользователем.
+  - name: films
+    description: Действия с фильмами.
+  - name: comments
+    description: Действия с комментариями.
+
+paths:
+  /users/register:
+    post:
+      tags:
+        - users
+      summary: Регистрация пользователя.
+      description: Регистрирует нового пользователя.
+
+      requestBody:
+        description: Информация для создания нового пользователя
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/createUser'
+        required: true
+
+      responses:
+        "201":
+          description: Пользователь зарегистрирован. Объект пользователя.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/user'
+
+        "409":
+          description: Пользователь с таким email уже существует
+
+
+  /users/login:
+    post:
+      tags:
+        - users
+      summary: Авторизация пользователя.
+      description: Выполняет авторизацию нового пользователя на основе логина и пароля.
+
+      responses:
+        "200":
+          description: Выполняет авторизацию нового пользователя на основе логина и пароля.
+
+        "400":
+          description: Данные для авторизации невалидные
+
+        "404":
+          description: Сервер не может найти запрашиваемый ресурс
+
+    get:
+      tags:
+        - users
+      summary: Проверка состояния пользователя.
+      description: Возвращает информацию по авторизированному пользователю.
+
+      responses:
+        "200":
+          description: Возвращает информацию по авторизированному пользователю.
+
+        "400":
+          description: Данные для авторизации невалидные
+
+        "404":
+          description: Сервер не может найти запрашиваемый ресурс
+
+  /users/logout:
+    get:
+      tags:
+        - users
+      summary: Выход из закрытой части проложения.
+      description: Возвращает информацию по успешному выходу из закрытой части приложения.
+
+      responses:
+        "200":
+          description: Успешно произведен выход из закрытой части приложения.
+
+        "400":
+          description: Данные для авторизации невалидные
+
+        "404":
+          description: Сервер не может найти запрашиваемый ресурс
+
+  /users/{userId}/avatar:
+    post:
+      tags:
+        - users
+      summary: Загрузить изображение аватара пользователя.
+      description: Загружает изображение аватара пользователя. Изображение
+        аватара должно быть в формате '.png' или '.jpg'.
+
+      responses:
+        "201":
+          description: Загружено изображение аватара пользователя.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/user'
+
+        "401":
+          description: Для получения ответа необходима авторизация.
+
+        "403":
+          description: У клиента нет прав доступа к содержимому.
+
+        "404":
+          description: Сервер не может найти запрашиваемый ресурс.
+
+  /films/add:
+    post:
+      tags:
+        - films
+      summary: Создать карточку с фильмом.
+      description: Создает карточку фильма на основании переданных данных.
+
+      requestBody:
+        description: Информация для создания новой карточки фильма.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/createFilm'
+        required: true
+
+      responses:
+        "201":
+          description: Создана карточка фильма.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/film'
+
+        "401":
+          description: Для получения ответа необходима авторизация.
+
+        "403":
+          description: У клиента нет прав доступа к содержимому.
+
+        "404":
+          description: Сервер не может найти запрашиваемый ресурс.
+
+  /films/{id}:
+    get:
+      tags:
+        - films
+      summary: Получить данные о фильме.
+      description: Получить данные о фильме по указанному идентификатором.
+
+      responses:
+        "200":
+          description: Возвращает информацию по указанному фильму.
+
+        "400":
+          description: Данные для авторизации невалидные
+
+        "404":
+          description: Сервер не может найти запрашиваемый ресурс
+
+  /films/edit/{id}:
+    put:
+      tags:
+        - films
+      summary: Обновить карточку с фильмом.
+      description: Обновляет карточку фильма на основании переданных данных.
+
+      requestBody:
+        description: Информация для обновления существующей карточки фильма.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/createFilm'
+        required: true
+
+      responses:
+        "201":
+          description: Обновлена карточка фильма.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/film'
+
+        "401":
+          description: Для получения ответа необходима авторизация.
+
+        "403":
+          description: У клиента нет прав доступа к содержимому.
+
+        "404":
+          description: Сервер не может найти запрашиваемый ресурс.
+
+  /films/delete/{id}:
+    delete:
+      tags:
+        - films
+      summary: Удалить карточку с фильмом.
+      description: Удаляет карточку фильма с переданным уникальным идентификатором.
+
+      responses:
+        "200":
+          description: Удалена карточка фильма.
+
+        "401":
+          description: Для получения ответа необходима авторизация.
+
+        "403":
+          description: У клиента нет прав доступа к содержимому.
+
+        "404":
+          description: Сервер не может найти запрашиваемый ресурс.
+
+  /films/{id}/comments:
+    put:
+      tags:
+        - comments
+      summary: Создать комментарий к фильму.
+      description: Создает комментарий к фильму на основании переданных данных.
+
+      requestBody:
+        description: Данные для создания комментария.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/createComment'
+        required: true
+
+      responses:
+        "201":
+          description: Создан комментарий к фильму.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/comment'
+
+        "401":
+          description: Для получения ответа необходима авторизация.
+
+        "403":
+          description: У клиента нет прав доступа к содержимому.
+
+        "404":
+          description: Сервер не может найти запрашиваемый ресурс.
+
+components:
+  schemas:
+    createUser:
+      type: object
+
+      properties:
+        name:
+          type: string
+          example: Keks
+
+        email:
+          type: string
+          example: Keks123@html-academy.com
+
+        password:
+          type: string
+          example: 123456
+
+    user:
+      type: object
+
+      properties:
+        id:
+          type: string
+          example: 6331b8bd344134d65387eac6
+
+        email:
+          type: string
+          example: Keks123@html-academy.com
+
+    createFilm:
+      type: object
+
+      properties:
+        title:
+          type: string
+          example: Оно
+
+        description:
+          type: string
+          example: Злобный клоун терроризирует подростков. Экранизация романа Стивена Кинга с жутким Биллом Скарсгардом.
+
+        genre:
+          type: string
+          example: Crime
+
+        year:
+          type: number
+          example: 2015
+
+        rating:
+          type: number
+          example: 4
+
+        preview:
+          type: string
+          example: it-preview.jpg
+
+        video:
+          type: string
+          example: it-preview.jpg
+
+        actors:
+          type: array
+          items: string
+          example: [ Джейден Мартелл, Джереми Рэй Тейлор, София Лиллис ]
+
+        director:
+          type: string
+          example: Роланд Эммерих
+
+        duration:
+          type: number
+          example: 153
+
+        commentCount:
+          type: number
+          example: 15
+
+        userId:
+          type: string
+          example: 6331b81ab0480836c0921580
+
+        poster:
+          type: string
+          example: it-poster.jpg
+
+        backgroundImage:
+          type: string
+          example: it-background.jpg
+
+        backgroundColor:
+          type: string
+          example: #CG4351
+
+    film:
+      type: object
+
+      properties:
+        title:
+          type: string
+          example: Оно
+
+        description:
+          type: string
+          example: Злобный клоун терроризирует подростков. Экранизация романа Стивена Кинга с жутким Биллом Скарсгардом.
+
+        publicationDate:
+          type: string
+          format: date-time
+          example: 2022-09-21T14:11:13.370Z
+
+        genre:
+          type: string
+          example: Crime
+
+        year:
+          type: number
+          example: 2015
+
+        rating:
+          type: number
+          example: 4
+
+        preview:
+          type: string
+          example: it-preview.jpg
+
+        video:
+          type: string
+          example: it-preview.jpg
+
+        actors:
+          type: array
+          items: string
+          example: [Джейден Мартелл, Джереми Рэй Тейлор, София Лиллис]
+
+        director:
+          type: string
+          example: Роланд Эммерих
+
+        duration:
+          type: number
+          example: 153
+
+        commentCount:
+          type: number
+          example: 15
+
+        userId:
+          type: string
+          example: 6331b81ab0480836c0921580
+
+        poster:
+          type: string
+          example: it-poster.jpg
+
+        backgroundImage:
+          type: string
+          example: it-background.jpg
+
+        backgroundColor:
+          type: string
+          example: #CG4351
+
+    createComment:
+      type: object
+
+      properties:
+        text:
+          type: string
+          example:
+
+        author:
+          type: string
+          example: 6331b8bd344134d65387eac6
+
+    comment:
+      type: object
+
+      properties:
+        text:
+          type: string
+          example:
+
+        postDate:
+          type: string
+          format: date-time
+          example: 2022-09-28T12:23:14.370Z
+
+        author:
+          type: string
+          example: 6331b8bd344134d65387eac6
