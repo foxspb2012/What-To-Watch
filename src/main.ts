@@ -17,6 +17,9 @@ import {FilmEntity, FilmModel} from './modules/film/film.entity.js';
 import CommentService from './modules/comment/comment.service.js';
 import {CommentServiceInterface} from './modules/comment/comment-service.interface.js';
 import {CommentEntity, CommentModel} from './modules/comment/comment.entity.js';
+import FavoriteService from './modules/favorite/favorite.service.js';
+import {FavoriteServiceInterface} from './modules/favorite/favorite-service.interface.js';
+import {FavoriteEntity, FavoriteModel} from './modules/favorite/favorite.entity.js';
 import Application from './app/application.js';
 
 const applicationContainer = new Container();
@@ -30,6 +33,8 @@ applicationContainer.bind<FilmServiceInterface>(Component.FilmServiceInterface).
 applicationContainer.bind<types.ModelType<FilmEntity>>(Component.FilmModel).toConstantValue(FilmModel);
 applicationContainer.bind<CommentServiceInterface>(Component.CommentServiceInterface).to(CommentService);
 applicationContainer.bind<types.ModelType<CommentEntity>>(Component.CommentModel).toConstantValue(CommentModel);
+applicationContainer.bind<FavoriteServiceInterface>(Component.FavoriteServiceInterface).to(FavoriteService);
+applicationContainer.bind<types.ModelType<FavoriteEntity>>(Component.FavoriteModel).toConstantValue(FavoriteModel);
 
 const application = applicationContainer.get<Application>(Component.Application);
 await application.init();

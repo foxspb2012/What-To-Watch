@@ -5,6 +5,7 @@ import {DocumentType, types} from '@typegoose/typegoose';
 import {CommentEntity} from './comment.entity.js';
 import {Component} from '../../types/component.types.js';
 import {LoggerInterface} from '../../common/logger/logger.interface.js';
+import {DEFAULT_COMMENT_COUNT} from './comment.constants.js';
 
 @injectable()
 export default class CommentService implements CommentServiceInterface {
@@ -14,9 +15,16 @@ export default class CommentService implements CommentServiceInterface {
   ) {}
 
   public async create(dto: CreateCommentDto): Promise<DocumentType<CommentEntity>> {
-    const result = await this.commentModel.create(dto);
+    const comment = await this.commentModel.create(dto);
     this.logger.info('New comment created.');
 
-    return result;
+    return comment.populate(['userId']);
+  }
+
+  public async getCommentsByFilmId(filmId: string, count?: number): Promise<DocumentType<CommentEntity>[]> {
+    const limit = count ?? DEFAULT_COMMENT_COUNT;
+    return this.commentModel
+      .find({filmId}, {}, {limit})
+      .populate('userId');
   }
 }
