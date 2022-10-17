@@ -6,7 +6,6 @@ import {DocumentType, types} from '@typegoose/typegoose';
 import {FilmEntity} from './film.entity.js';
 import {Component} from '../../types/component.types.js';
 import {LoggerInterface} from '../../common/logger/logger.interface.js';
-import {DEFAULT_FILM_COUNT} from './film.constant.js';
 import {SortType} from '../../types/sort-type.enum.js';
 
 @injectable()
@@ -24,6 +23,10 @@ export default class FilmService implements FilmServiceInterface {
     return result;
   }
 
+  public async findByTitle(title: string): Promise<DocumentType<FilmEntity> | null> {
+    return this.filmModel.findOne({title});
+  }
+
   public async updateById(filmId: string, dto: UpdateFilmDto): Promise<DocumentType<FilmEntity> | null> {
     return this.filmModel
       .findByIdAndUpdate(filmId, dto, {new: true})
@@ -37,8 +40,7 @@ export default class FilmService implements FilmServiceInterface {
       .exec();
   }
 
-  public async find(count?: number): Promise<DocumentType<FilmEntity>[]> {
-    const limit = count ?? DEFAULT_FILM_COUNT;
+  public async find(limit: number): Promise<DocumentType<FilmEntity>[]> {
     return this.filmModel
       .find()
       .sort({createdAt: SortType.Down})
@@ -47,8 +49,7 @@ export default class FilmService implements FilmServiceInterface {
       .exec();
   }
 
-  public async findByGenre(genreType: string, count?: number): Promise<DocumentType<FilmEntity>[]> {
-    const limit = count ?? DEFAULT_FILM_COUNT;
+  public async findByGenre(genreType: string, limit: number): Promise<DocumentType<FilmEntity>[]> {
     return this.filmModel
       .find({genre: genreType}, {}, {limit})
       .sort({createdAt: SortType.Down})

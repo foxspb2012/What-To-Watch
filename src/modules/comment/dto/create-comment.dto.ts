@@ -4,4 +4,5 @@ export default class CreateCommentDto {
   public postDate!: Date;
   public author!: string;
   public filmId!: string;
+  deleted?: boolean;
 }
