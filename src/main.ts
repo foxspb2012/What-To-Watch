@@ -20,6 +20,13 @@ import {CommentEntity, CommentModel} from './modules/comment/comment.entity.js';
 import FavoriteService from './modules/favorite/favorite.service.js';
 import {FavoriteServiceInterface} from './modules/favorite/favorite-service.interface.js';
 import {FavoriteEntity, FavoriteModel} from './modules/favorite/favorite.entity.js';
+import {ControllerInterface} from './common/controller/controller.interface.js';
+import FavoriteController from './modules/favorite/favorite.controller.js';
+import UserController from './modules/user/user.controller.js';
+import FilmController from './modules/film/film.controller.js';
+import ExceptionFilter from './common/errors/exception-filter.js';
+import {ExceptionFilterInterface} from './common/errors/exception-filter.interface.js';
+
 import Application from './app/application.js';
 
 const applicationContainer = new Container();
@@ -35,6 +42,11 @@ applicationContainer.bind<CommentServiceInterface>(Component.CommentServiceInter
 applicationContainer.bind<types.ModelType<CommentEntity>>(Component.CommentModel).toConstantValue(CommentModel);
 applicationContainer.bind<FavoriteServiceInterface>(Component.FavoriteServiceInterface).to(FavoriteService);
 applicationContainer.bind<types.ModelType<FavoriteEntity>>(Component.FavoriteModel).toConstantValue(FavoriteModel);
+
+applicationContainer.bind<ControllerInterface>(Component.FavoriteController).to(FavoriteController).inSingletonScope();
+applicationContainer.bind<ControllerInterface>(Component.UserController).to(UserController).inSingletonScope();
+applicationContainer.bind<ControllerInterface>(Component.FilmController).to(FilmController).inSingletonScope();
+applicationContainer.bind<ExceptionFilterInterface>(Component.ExceptionFilterInterface).to(ExceptionFilter).inSingletonScope();
 
 const application = applicationContainer.get<Application>(Component.Application);
 await application.init();

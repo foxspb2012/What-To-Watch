@@ -9,6 +9,7 @@ const {prop, modelOptions} = typegoose;
   }
 })
 export class FavoriteEntity extends defaultClasses.TimeStamps {
+
   @prop({
     ref: UserEntity,
     required: true

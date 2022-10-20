@@ -1,6 +1,8 @@
 import {GenreType} from '../types/genre.enum.js';
 import {Film} from '../types/film.type.js';
 import bcrypt from 'bcrypt';
+import {plainToInstance} from 'class-transformer';
+import {ClassConstructor} from 'class-transformer/types/interfaces/class-constructor.type.js';
 
 export const createFilm = (row: string) => {
   const tokens = row.replace('\n', '').split('\t');
@@ -10,7 +12,7 @@ export const createFilm = (row: string) => {
     title,
     description,
     publicationDate: new Date(date),
-    genre: GenreType[genre as 'Comedy' | 'Crime' | 'Documentary' | 'Drama' | 'Horror' | 'Family' | 'Romance' | 'Scifi' | 'Thriller'],
+    genre: GenreType[genre as 'comedy' | 'crime' | 'documentary' | 'drama' | 'horror' | 'family' | 'romance' | 'scifi' | 'thriller'],
     year: Number.parseInt(year, 10),
     rating: Number.parseInt(rating, 10),
     preview,
@@ -34,3 +36,10 @@ export const createSHA256 = (password: string, saltRounds: string): string => {
   const salt = bcrypt.genSaltSync(parseInt(saltRounds, 10));
   return bcrypt.hashSync(password, salt);
 };
+
+export const fillDTO = <T, V>(someDto: ClassConstructor<T>, plainObject: V) =>
+  plainToInstance(someDto, plainObject, {excludeExtraneousValues: true});
+
+export const createErrorObject = (message: string) => ({
+  error: message,
+});
