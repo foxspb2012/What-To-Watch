@@ -42,8 +42,11 @@ export default class FilmController extends Controller {
     {query}: Request<core.ParamsDictionary, unknown, unknown, RequestQuery>,
     res: Response
   ):Promise<void> {
+
+    const offset = parseInt(query.offset ?? '0', 10);
     const limit = parseInt(query.limit ?? '0', 10) || DEFAULT_FILM_COUNT;
-    const films = await this.filmService.find(limit);
+
+    const films = await this.filmService.find(offset, limit);
     this.send(res, StatusCodes.OK, fillDTO(FilmShortResponse, films));
   }
 
@@ -55,7 +58,7 @@ export default class FilmController extends Controller {
     if (existsFilm) {
       throw new HttpError(
         StatusCodes.CONFLICT,
-        `Film with title «${body.title}» exists.`,
+        `Film with title «${body.title}» does exists.`,
         'FilmController'
       );
     }
@@ -63,8 +66,8 @@ export default class FilmController extends Controller {
     const result = await this.filmService.create(body);
     if (!result) {
       throw new HttpError(
-        StatusCodes.FORBIDDEN,
-        `Film with title «${body.title}» not created.`,
+        StatusCodes.NO_CONTENT,
+        `Film with title «${body.title}» does not created.`,
         'FilmController'
       );
     }
@@ -82,8 +85,8 @@ export default class FilmController extends Controller {
 
     if (!existFilm) {
       throw new HttpError(
-        StatusCodes.CONFLICT,
-        `Film with ID ${params.filmId} not exist`,
+        StatusCodes.NOT_FOUND,
+        `Film with ID ${params.filmId} does not exist`,
         'FilmController'
       );
     }
@@ -95,13 +98,15 @@ export default class FilmController extends Controller {
     {params, query}: Request<core.ParamsDictionary, unknown, unknown, RequestQuery>,
     res: Response
   ):Promise<void> {
+    const offset = parseInt(query.offset ?? '0', 10);
     const limit = parseInt(query.limit ?? '0', 10) || DEFAULT_FILM_COUNT;
-    const result = await this.filmService.findByGenre(params.genre as GenreType, limit);
+
+    const result = await this.filmService.findByGenre(params.genre as GenreType, offset, limit);
 
     if (!result) {
       throw new HttpError(
         StatusCodes.NOT_FOUND,
-        `Film with genre ${params.genre} not exist`,
+        `Film with genre ${params.genre} does not exist`,
         'FilmController'
       );
     }
@@ -117,7 +122,7 @@ export default class FilmController extends Controller {
     if (!updatedFilm) {
       throw new HttpError(
         StatusCodes.CONFLICT,
-        `Film with ID: ${params.filmId} not found`,
+        `Film with ID: ${params.filmId} does not found`,
         'FilmController'
       );
     }
@@ -133,7 +138,7 @@ export default class FilmController extends Controller {
     if (!result) {
       throw new HttpError(
         StatusCodes.CONFLICT,
-        `Film with ID: ${params.filmId} not deleted`,
+        `Film with ID: ${params.filmId} does not deleted`,
         'FilmController'
       );
     }
@@ -146,13 +151,13 @@ export default class FilmController extends Controller {
     _req: Request,
     res: Response
   ):Promise<void> {
-    const films = await this.filmService.find(1);
+    const films = await this.filmService.find(0, 1);
     const promoFilm = await this.filmService.findPromoFilm(films[0].id);
 
     if (!promoFilm) {
       throw new HttpError(
-        StatusCodes.CONFLICT,
-        'Promo film not exist',
+        StatusCodes.NOT_FOUND,
+        'Promo film does not exist',
         'FilmController'
       );
     }

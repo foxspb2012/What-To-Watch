@@ -50,7 +50,7 @@ export default class UserController extends Controller {
     if (!existUser) {
       throw new HttpError(
         StatusCodes.NOT_FOUND,
-        `User with email: ${body.email} not found`,
+        `User with email: ${body.email} does not found`,
         'userController'
       );
     }
@@ -65,7 +65,7 @@ export default class UserController extends Controller {
     if (existUser) {
       throw new HttpError(
         StatusCodes.CONFLICT,
-        `User with email «${body.email}» exists.`,
+        `User with email «${body.email}» does exists.`,
         'UserController'
       );
     }

@@ -40,19 +40,22 @@ export default class FilmService implements FilmServiceInterface {
       .exec();
   }
 
-  public async find(limit: number): Promise<DocumentType<FilmEntity>[]> {
+  public async find(offset:number, limit:number): Promise<DocumentType<FilmEntity>[]> {
     return this.filmModel
       .find()
       .sort({createdAt: SortType.Down})
+      .skip(offset)
       .limit(limit)
       .populate('userId')
       .exec();
   }
 
-  public async findByGenre(genreType: string, limit: number): Promise<DocumentType<FilmEntity>[]> {
+  public async findByGenre(genreType: string, offset:number, limit:number): Promise<DocumentType<FilmEntity>[]> {
     return this.filmModel
-      .find({genre: genreType}, {}, {limit})
+      .find({genre: genreType})
       .sort({createdAt: SortType.Down})
+      .skip(offset)
+      .limit(limit)
       .populate('userId')
       .exec();
   }
