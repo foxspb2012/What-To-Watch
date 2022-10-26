@@ -9,6 +9,7 @@ import CreateFavoriteDto from './dto/create-favorite.dto.js';
 import FavoriteResponse from './response/favorite-response.dto.js';
 import {fillDTO} from '../../utils/common.js';
 import {StatusCodes} from 'http-status-codes';
+import {ValidateDtoMiddleware} from '../../common/middlewares/validate-dto.middleware.js';
 
 @injectable()
 export default class CategoryController extends Controller {
@@ -20,9 +21,22 @@ export default class CategoryController extends Controller {
 
     this.logger.info('Register routes for FavoriteController...');
 
-    this.addRoute({path: '/', method: HttpMethod.Get, handler: this.index});
-    this.addRoute({path: '/', method: HttpMethod.Post, handler: this.create});
-    this.addRoute({path: '/', method: HttpMethod.Delete, handler: this.delete});
+    this.addRoute({
+      path: '/',
+      method: HttpMethod.Get,
+      handler: this.index
+    });
+    this.addRoute({
+      path: '/',
+      method: HttpMethod.Post,
+      handler: this.create,
+      middlewares: [new ValidateDtoMiddleware(CreateFavoriteDto)]
+    });
+    this.addRoute({
+      path: '/',
+      method: HttpMethod.Delete,
+      handler: this.delete
+    });
   }
 
   public async index(

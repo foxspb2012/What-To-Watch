@@ -74,25 +74,17 @@ export default class FilmService implements FilmServiceInterface {
       .exec();
   }
 
-  public async incCommentCount(filmId: string): Promise<DocumentType<FilmEntity> | null> {
+  public async calcRatingCommentCount(filmId: string, rating: number): Promise<DocumentType<FilmEntity> | null> {
     return this.filmModel
       .findByIdAndUpdate(filmId, {
         '$inc': {
-          commentCount: 1
+          commentCount: 1,
+          rating: rating,
         }
       }).exec();
   }
 
-  public async calcRating(filmId: string, rating: number): Promise<DocumentType<FilmEntity> | null> {
-    return this.filmModel
-      .findByIdAndUpdate(filmId, {
-        '$inc': {
-          rating: rating
-        }
-      }).exec();
-  }
-
-  public async exist(filmId: string): Promise<boolean> {
+  public async exists(filmId: string): Promise<boolean> {
     return this.filmModel
       .exists({_id: filmId}) !== null;
   }
