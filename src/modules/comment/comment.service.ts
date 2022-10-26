@@ -6,6 +6,7 @@ import {CommentEntity} from './comment.entity.js';
 import {Component} from '../../types/component.types.js';
 import {LoggerInterface} from '../../common/logger/logger.interface.js';
 import {DEFAULT_COMMENT_COUNT} from './comment.constants.js';
+import {SortType} from '../../types/sort-type.enum.js';
 
 @injectable()
 export default class CommentService implements CommentServiceInterface {
@@ -18,27 +19,28 @@ export default class CommentService implements CommentServiceInterface {
     const comment = await this.commentModel.create(dto);
     this.logger.info('New comment created.');
 
-    return comment.populate(['userId']);
+    return comment.populate(['author']);
   }
 
-  public async getCommentsByFilmId(filmId: string, count?: number): Promise<DocumentType<CommentEntity>[]> {
+  public async findByFilmId(filmId: string, count?: number): Promise<DocumentType<CommentEntity>[]> {
     const limit = count ?? DEFAULT_COMMENT_COUNT;
     return this.commentModel
       .find({filmId}, {}, {limit})
+      .sort({createdAt: SortType.Down})
       .populate('userId');
   }
 
   public async update(
-    movieId: string,
+    filmId: string,
     dto: Partial<CreateCommentDto>
   ): Promise<DocumentType<CommentEntity> | null> {
-    return this.commentModel.findByIdAndUpdate({ _id: movieId }, dto, {
+    return this.commentModel.findByIdAndUpdate({ _id: filmId }, dto, {
       new: true,
     });
   }
 
-  public async delete(filmId: string): Promise<void> {
-    const records = await this.commentModel.find({ filmId: filmId });
+  public async deleteById(filmId: string): Promise<void> {
+    const records = await this.commentModel.find({filmId});
     for await (const record of records) {
       await this.update(record.id, { deleted: true });
     }

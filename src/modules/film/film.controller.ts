@@ -11,12 +11,16 @@ import FilmResponse from './response/film.response.js';
 import FilmShortResponse from './response/film-short.response.js';
 import CreateFilmDto from './dto/create-film.dto.js';
 import UpdateFilmDto from './dto/update-film.dto.js';
+import CommentResponse from '../comment/response/comment.response.js';
 import {fillDTO} from '../../utils/common.js';
 import HttpError from '../../common/errors/http-error.js';
 import {RequestQuery} from '../../types/request-query.js';
 import * as core from 'express-serve-static-core';
 import {GenreType} from '../../types/genre.enum.js';
 import {DEFAULT_FILM_COUNT} from './film.constant.js';
+import {ValidateObjectIdMiddleware} from '../../common/middlewares/validate-objectid.middleware.js';
+import {ValidateDtoMiddleware} from '../../common/middlewares/validate-dto.middleware.js';
+import {DocumentExistsMiddleware} from '../../common/middlewares/document-exists.middleware.js';
 
 @injectable()
 export default class FilmController extends Controller {
@@ -29,84 +33,130 @@ export default class FilmController extends Controller {
 
     this.logger.info('Register routes for FilmController…');
 
-    this.addRoute({path: '/', method: HttpMethod.Get, handler: this.index});
-    this.addRoute({path: '/', method: HttpMethod.Post, handler: this.create});
-    this.addRoute({path: '/promo', method: HttpMethod.Get, handler: this.getPromo});
-    this.addRoute({path: '/:filmId', method: HttpMethod.Get, handler: this.getById});
-    this.addRoute({path: '/:filmId', method: HttpMethod.Patch, handler: this.update});
-    this.addRoute({path: '/:filmId', method: HttpMethod.Delete, handler: this.delete});
-    this.addRoute({path: '/genre/:genre', method: HttpMethod.Get, handler: this.getByGenre});
+    this.addRoute({
+      path: '/',
+      method: HttpMethod.Get,
+      handler: this.index
+    });
+    this.addRoute({
+      path: '/',
+      method: HttpMethod.Post,
+      handler: this.create,
+      middlewares: [new ValidateDtoMiddleware(CreateFilmDto)]
+    });
+    this.addRoute({
+      path: '/promo',
+      method: HttpMethod.Get,
+      handler: this.getPromo,
+      middlewares: [
+        new DocumentExistsMiddleware(this.filmService, 'Film', 'filmId'),
+      ]
+    });
+    this.addRoute({
+      path: '/:filmId',
+      method: HttpMethod.Get,
+      handler: this.show,
+      middlewares: [
+        new ValidateObjectIdMiddleware('filmId'),
+        new DocumentExistsMiddleware(this.filmService, 'Film', 'filmId'),
+      ]
+    });
+    this.addRoute({
+      path: '/:filmId',
+      method: HttpMethod.Patch,
+      handler: this.update,
+      middlewares: [
+        new ValidateObjectIdMiddleware('filmId'),
+        new DocumentExistsMiddleware(this.filmService, 'Film', 'filmId'),
+      ]
+    });
+    this.addRoute({
+      path: '/:filmId',
+      method: HttpMethod.Delete,
+      handler: this.delete,
+      middlewares: [
+        new ValidateObjectIdMiddleware('filmId'),
+        new DocumentExistsMiddleware(this.filmService, 'Film', 'filmId'),
+      ]
+    });
+    this.addRoute({
+      path: '/:filmId/comments',
+      method: HttpMethod.Get,
+      handler: this.getComments,
+      middlewares: [
+        new ValidateObjectIdMiddleware('filmId'),
+        new DocumentExistsMiddleware(this.filmService, 'Film', 'filmId'),
+      ]});
+    this.addRoute({
+      path: '/genre/:genre',
+      method: HttpMethod.Get,
+      handler: this.getByGenre
+    });
   }
 
   public async index(
     {query}: Request<core.ParamsDictionary, unknown, unknown, RequestQuery>,
     res: Response
-  ):Promise<void> {
+  ): Promise<void> {
 
     const offset = parseInt(query.offset ?? '0', 10);
     const limit = parseInt(query.limit ?? '0', 10) || DEFAULT_FILM_COUNT;
 
     const films = await this.filmService.find(offset, limit);
-    this.send(res, StatusCodes.OK, fillDTO(FilmShortResponse, films));
+    this.ok(res, fillDTO(FilmShortResponse, films));
   }
 
   public async create(
     {body}: Request<Record<string, unknown>, Record<string, unknown>, CreateFilmDto>,
     res: Response): Promise<void> {
-    const existsFilm = await this.filmService.findByTitle(body.title);
+    const {title} = body;
+    const existsFilm = await this.filmService.findByTitle(title);
 
     if (existsFilm) {
       throw new HttpError(
         StatusCodes.CONFLICT,
-        `Film with title «${body.title}» does exists.`,
+        `Film with title «${title}» does exists.`,
         'FilmController'
       );
     }
 
     const result = await this.filmService.create(body);
+
     if (!result) {
       throw new HttpError(
         StatusCodes.NO_CONTENT,
-        `Film with title «${body.title}» does not created.`,
+        `Film with title «${title}» does not created.`,
         'FilmController'
       );
     }
-    this.created(
-      res,
-      fillDTO(FilmResponse, result)
-    );
+
+    this.created(res, fillDTO(FilmResponse, result));
   }
 
-  public async getById(
+  public async show(
     {params}: Request<core.ParamsDictionary>,
     res: Response
-  ):Promise<void> {
-    const existFilm = await this.filmService.findById(params.filmId);
+  ): Promise<void> {
+    const {filmId} = params;
+    const film = await this.filmService.findById(filmId);
 
-    if (!existFilm) {
-      throw new HttpError(
-        StatusCodes.NOT_FOUND,
-        `Film with ID ${params.filmId} does not exist`,
-        'FilmController'
-      );
-    }
-
-    this.ok(res, fillDTO(FilmResponse, existFilm));
+    this.ok(res, fillDTO(FilmResponse, film));
   }
 
   public async getByGenre(
     {params, query}: Request<core.ParamsDictionary, unknown, unknown, RequestQuery>,
     res: Response
-  ):Promise<void> {
+  ): Promise<void> {
+    const {genre} = params;
     const offset = parseInt(query.offset ?? '0', 10);
     const limit = parseInt(query.limit ?? '0', 10) || DEFAULT_FILM_COUNT;
 
-    const result = await this.filmService.findByGenre(params.genre as GenreType, offset, limit);
+    const result = await this.filmService.findByGenre(genre as GenreType, offset, limit);
 
     if (!result) {
       throw new HttpError(
         StatusCodes.NOT_FOUND,
-        `Film with genre ${params.genre} does not exist`,
+        `Film with genre ${genre} does not exist`,
         'FilmController'
       );
     }
@@ -115,53 +165,44 @@ export default class FilmController extends Controller {
   }
 
   public async update(
-    {body, params}:  Request<core.ParamsDictionary , Record<string, unknown>, UpdateFilmDto>,
+    {body, params}: Request<core.ParamsDictionary, Record<string, unknown>, UpdateFilmDto>,
     res: Response
-  ):Promise<void> {
-    const updatedFilm = await this.filmService.updateById(params.filmId, body);
-    if (!updatedFilm) {
-      throw new HttpError(
-        StatusCodes.CONFLICT,
-        `Film with ID: ${params.filmId} does not found`,
-        'FilmController'
-      );
-    }
-    const result = await this.filmService.findById(updatedFilm.id);
-    this.ok(res, fillDTO(FilmResponse, result));
+  ): Promise<void> {
+    const {filmId} = params;
+    const updatedFilm = await this.filmService.updateById(filmId, body);
+
+    this.ok(res, fillDTO(FilmResponse, updatedFilm));
   }
 
   public async delete(
-    {params}:  Request<core.ParamsDictionary>,
+    {params}: Request<core.ParamsDictionary>,
     res: Response
-  ):Promise<void> {
-    const result = await this.filmService.deleteById(params.filmId);
-    if (!result) {
-      throw new HttpError(
-        StatusCodes.CONFLICT,
-        `Film with ID: ${params.filmId} does not deleted`,
-        'FilmController'
-      );
-    }
-    await this.commentService.delete(params.filmId);
+  ): Promise<void> {
+    const {filmId} = params;
+    const film = await this.filmService.deleteById(filmId);
 
-    this.ok(res, fillDTO(FilmResponse, result));
+    await this.commentService.deleteById(filmId);
+
+    this.noContent(res, film);
   }
 
   public async getPromo(
     _req: Request,
     res: Response
-  ):Promise<void> {
+  ): Promise<void> {
     const films = await this.filmService.find(0, 1);
-    const promoFilm = await this.filmService.findPromoFilm(films[0].id);
+    const film = await this.filmService.findPromoFilm(films[0].id);
 
-    if (!promoFilm) {
-      throw new HttpError(
-        StatusCodes.NOT_FOUND,
-        'Promo film does not exist',
-        'FilmController'
-      );
-    }
+    this.ok(res, fillDTO(FilmResponse, film));
+  }
 
-    this.ok(res, fillDTO(FilmResponse, promoFilm));
+  public async getComments(
+    {params}: Request<core.ParamsDictionary, object, object>,
+    res: Response
+  ): Promise<void> {
+    const {filmId} = params;
+
+    const comments = await this.commentService.findByFilmId(filmId);
+    this.ok(res, fillDTO(CommentResponse, comments));
   }
 }
