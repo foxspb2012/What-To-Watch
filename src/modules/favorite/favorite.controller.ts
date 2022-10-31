@@ -10,6 +10,7 @@ import FavoriteResponse from './response/favorite-response.dto.js';
 import {fillDTO} from '../../utils/common.js';
 import {StatusCodes} from 'http-status-codes';
 import {ValidateDtoMiddleware} from '../../common/middlewares/validate-dto.middleware.js';
+import {PrivateRouteMiddleware} from '../../common/middlewares/private-route.middleware.js';
 
 @injectable()
 export default class CategoryController extends Controller {
@@ -24,45 +25,59 @@ export default class CategoryController extends Controller {
     this.addRoute({
       path: '/',
       method: HttpMethod.Get,
-      handler: this.index
+      handler: this.index,
+      middlewares: [
+        new PrivateRouteMiddleware()
+      ]
     });
     this.addRoute({
       path: '/',
       method: HttpMethod.Post,
       handler: this.create,
-      middlewares: [new ValidateDtoMiddleware(CreateFavoriteDto)]
+      middlewares: [
+        new PrivateRouteMiddleware(),
+        new ValidateDtoMiddleware(CreateFavoriteDto)]
     });
     this.addRoute({
       path: '/',
       method: HttpMethod.Delete,
-      handler: this.delete
+      handler: this.delete,
+      middlewares: [
+        new PrivateRouteMiddleware()
+      ]
     });
   }
 
   public async index(
-    {body}: Request<Record<string, unknown>, Record<string, unknown>>,
+    {user}: Request<Record<string, unknown>, Record<string, unknown>>,
     res: Response): Promise<void> {
-    const {userId} = body;
+    const {id: userId} = user;
 
     const favorites = await this.favoriteService.getFavoriteByUserId(userId);
     this.send(res, StatusCodes.OK, fillDTO(FavoriteResponse, favorites));
   }
 
   public async create(
-    {body}: Request<Record<string, unknown>, Record<string, unknown>, CreateFavoriteDto>,
+    {body, user}: Request<Record<string, unknown>, Record<string, unknown>, CreateFavoriteDto>,
     res: Response): Promise<void> {
-    await this.favoriteService.pushToFavorite(body);
+    const {filmId} = body;
+    const {id: userId} = user;
 
-    const favorites = await this.favoriteService.getFavoriteByUserId(body.userId);
+    await this.favoriteService.pushToFavorite({filmId, userId});
+
+    const favorites = await this.favoriteService.getFavoriteByUserId(userId);
     this.created(res, fillDTO(FavoriteResponse, favorites));
   }
 
   public async delete(
-    {body}: Request<Record<string, unknown>, Record<string, unknown>, CreateFavoriteDto>,
+    {body, user}: Request<Record<string, unknown>, Record<string, unknown>, CreateFavoriteDto>,
     res: Response): Promise<void> {
-    await this.favoriteService.pullFromFavorite(body);
+    const {filmId} = body;
+    const {id: userId} = user;
 
-    const favorites = await this.favoriteService.getFavoriteByUserId(body.userId);
+    await this.favoriteService.pullFromFavorite({filmId, userId});
+
+    const favorites = await this.favoriteService.getFavoriteByUserId(userId);
     this.ok(res, fillDTO(FavoriteResponse, favorites));
   }
 }

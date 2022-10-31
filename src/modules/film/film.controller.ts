@@ -21,6 +21,7 @@ import {DEFAULT_FILM_COUNT} from './film.constant.js';
 import {ValidateObjectIdMiddleware} from '../../common/middlewares/validate-objectid.middleware.js';
 import {ValidateDtoMiddleware} from '../../common/middlewares/validate-dto.middleware.js';
 import {DocumentExistsMiddleware} from '../../common/middlewares/document-exists.middleware.js';
+import {PrivateRouteMiddleware} from '../../common/middlewares/private-route.middleware.js';
 
 @injectable()
 export default class FilmController extends Controller {
@@ -42,7 +43,9 @@ export default class FilmController extends Controller {
       path: '/',
       method: HttpMethod.Post,
       handler: this.create,
-      middlewares: [new ValidateDtoMiddleware(CreateFilmDto)]
+      middlewares: [
+        new PrivateRouteMiddleware(),
+        new ValidateDtoMiddleware(CreateFilmDto)]
     });
     this.addRoute({
       path: '/promo',
@@ -66,6 +69,7 @@ export default class FilmController extends Controller {
       method: HttpMethod.Patch,
       handler: this.update,
       middlewares: [
+        new PrivateRouteMiddleware(),
         new ValidateObjectIdMiddleware('filmId'),
         new DocumentExistsMiddleware(this.filmService, 'Film', 'filmId'),
       ]
@@ -75,6 +79,7 @@ export default class FilmController extends Controller {
       method: HttpMethod.Delete,
       handler: this.delete,
       middlewares: [
+        new PrivateRouteMiddleware(),
         new ValidateObjectIdMiddleware('filmId'),
         new DocumentExistsMiddleware(this.filmService, 'Film', 'filmId'),
       ]
@@ -107,7 +112,7 @@ export default class FilmController extends Controller {
   }
 
   public async create(
-    {body}: Request<Record<string, unknown>, Record<string, unknown>, CreateFilmDto>,
+    {body, user}: Request<Record<string, unknown>, Record<string, unknown>, CreateFilmDto>,
     res: Response): Promise<void> {
     const {title} = body;
     const existsFilm = await this.filmService.findByTitle(title);
@@ -120,7 +125,7 @@ export default class FilmController extends Controller {
       );
     }
 
-    const result = await this.filmService.create(body);
+    const result = await this.filmService.create({ ...body, userId: user.id });
 
     if (!result) {
       throw new HttpError(

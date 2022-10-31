@@ -6,7 +6,6 @@ import {
   IsInt,
   IsNumber,
   IsString,
-  IsMongoId,
   MaxLength,
   MinLength,
   Contains
@@ -54,7 +53,6 @@ export default class CreateFilmDto {
   @IsInt({message: 'Comment count must be an integer'})
   public commentCount!: number;
 
-  @IsMongoId({message: 'userId field must be valid an id'})
   public userId!: string;
 
   @Contains('.jpg',{message: 'Poster should be with the extension .jpg'})
