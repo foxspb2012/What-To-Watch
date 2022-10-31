@@ -12,4 +12,4 @@ coverage
 test-data.tsv
 *.env
 /mongodb/
-/upload/
+/src/upload/

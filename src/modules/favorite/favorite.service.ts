@@ -39,7 +39,6 @@ export default class FavoriteService implements FavoriteServiceInterface {
   }
 
   public async getFavoriteByUserId(userId: string): Promise<DocumentType<FilmEntity>[]> {
-
     const favorites = await this.favoriteModel
       .distinct('favorites', {userId})
       .exec();
