@@ -62,7 +62,6 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRvcmFuc0BvdmVybG9vay5uZ
 
 ###
 
-
 # Фильмы
 ## Получение списка фильмов
 GET http://localhost:4000/films?offset=30 HTTP/1.1
@@ -118,13 +117,27 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRvcmFuc0BvdmVybG9vay5uZ
 
 ###
 ## Обновление фильма
-PATCH http://localhost:4000/films/634971d1351d0b51b90a0154 HTTP/1.1
+PATCH http://localhost:4000/films/634971d0351d0b51b90a004e HTTP/1.1
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRvcmFuc0BvdmVybG9vay5uZXQiLCJpZCI6IjYzNWZjZmE1Y2ExNTRjMWM5OTkzZjZiYSIsImlhdCI6MTY2NzIyNzE0NSwiZXhwIjoxNjY3Mzk5OTQ1fQ.aummbsol_fMUF5DLMROgu0mP5HD7Q6qf7B6mOHaz448
 
 {
   "title": "Ночной дозор 5",
   "description": "Проверка обновления"
 }
+
+###
+## Загрузка изображения для фильма
+POST http://localhost:4000/films/634971d0351d0b51b90a004e/poster HTTP/1.1
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRvcmFuc0BvdmVybG9vay5uZXQiLCJpZCI6IjYzNWZjZmE1Y2ExNTRjMWM5OTkzZjZiYSIsImlhdCI6MTY2NzIyNzE0NSwiZXhwIjoxNjY3Mzk5OTQ1fQ.aummbsol_fMUF5DLMROgu0mP5HD7Q6qf7B6mOHaz448
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="poster"; filename="avatar.jpg"
+Content-Type: image/jpeg
+
+< /Users/potapov/avatar.jpg
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
 
 ###
 ## Удалить фильм

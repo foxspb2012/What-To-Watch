@@ -34,6 +34,13 @@ export default class FilmService implements FilmServiceInterface {
       .exec();
   }
 
+  public async updateImageById(filmId: string, newFile: object): Promise<DocumentType<FilmEntity> | null> {
+    return this.filmModel
+      .findByIdAndUpdate(filmId, newFile, {new: true})
+      .populate('userId')
+      .exec();
+  }
+
   public async deleteById(filmId: string): Promise<DocumentType<FilmEntity> | null> {
     return this.filmModel
       .findByIdAndDelete(filmId)
