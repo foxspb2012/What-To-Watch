@@ -8,6 +8,7 @@ export interface FilmServiceInterface extends DocumentExistsInterface {
   create(dto: CreateFilmDto): Promise<DocumentType<FilmEntity>>;
   findByTitle(title: string): Promise<DocumentType<FilmEntity> | null>
   updateById(filmId: string, dto: UpdateFilmDto): Promise<DocumentType<FilmEntity> | null>;
+  updateImageById(filmId: string, newFile: object): Promise<DocumentType<FilmEntity> | null>
   deleteById(filmId: string): Promise<DocumentType<FilmEntity> | null>
   find(offset: number, limit: number): Promise<DocumentType<FilmEntity>[]>;
   findByGenre(genre: string, offset: number, limit: number): Promise<DocumentType<FilmEntity>[]>;

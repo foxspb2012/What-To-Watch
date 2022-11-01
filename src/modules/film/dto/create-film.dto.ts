@@ -8,7 +8,6 @@ import {
   IsString,
   MaxLength,
   MinLength,
-  Contains
 } from 'class-validator';
 
 export default class CreateFilmDto {
@@ -32,10 +31,8 @@ export default class CreateFilmDto {
   @IsNumber({},{message: 'Rating must be a number'})
   public rating!: number;
 
-  @IsString({message: 'Preview must be an string'})
   public preview!: string;
 
-  @IsString({message: 'Video must be an string'})
   public video!: string;
 
   @IsArray({message: 'Field actors must be an array'})
@@ -55,10 +52,8 @@ export default class CreateFilmDto {
 
   public userId!: string;
 
-  @Contains('.jpg',{message: 'Poster should be with the extension .jpg'})
   public poster!: string;
 
-  @Contains('.jpg',{message: 'Background should be with the extension .jpg'})
   public backgroundImage!: string;
 
   @IsString({message: 'Background color must be an string'})
