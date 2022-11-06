@@ -17,14 +17,14 @@ export default class ExceptionFilter implements ExceptionFilterInterface {
     this.logger.info('Register ExceptionFilter');
   }
 
-  public httpErrorhandler(error: HttpError, _req: Request, res: Response, _next: NextFunction): void {
+  public handleHttpError(error: HttpError, _req: Request, res: Response, _next: NextFunction): void {
     this.logger.info(`${error.detail}: ${error.httpStatusCode} - ${error.message}`);
     res
       .status(error.httpStatusCode)
       .json(createErrorObject(ServiceError.HttpError, error.message));
   }
 
-  public validationErrorhandler(error: ValidationError, _req: Request, res: Response, _next: NextFunction): void {
+  public handleValidationError(error: ValidationError, _req: Request, res: Response, _next: NextFunction): void {
     this.logger.error(`[Validation Error]: ${error.message}`);
     error.details.forEach(
       (errorField) => this.logger.error(`[${errorField.property}] — ${errorField.messages}`)
@@ -39,7 +39,7 @@ export default class ExceptionFilter implements ExceptionFilterInterface {
       ));
   }
 
-  public otherErrorhandler(error: Error, _req: Request, res: Response, _next: NextFunction): void {
+  public handleOtherError(error: Error, _req: Request, res: Response, _next: NextFunction): void {
     this.logger.info(error.message);
     res
       .status(StatusCodes.INTERNAL_SERVER_ERROR)
@@ -48,13 +48,13 @@ export default class ExceptionFilter implements ExceptionFilterInterface {
 
   public catch(error: Error | HttpError | ValidationError, req: Request, res: Response, next: NextFunction): void {
     if (error instanceof HttpError) {
-      return this.httpErrorhandler(error, req, res, next);
+      return this.handleHttpError(error, req, res, next);
     }
 
     if (error instanceof ValidationError) {
-      return this.validationErrorhandler(error, req, res, next);
+      return this.handleValidationError(error, req, res, next);
     }
 
-    this.otherErrorhandler(error, req, res, next);
+    this.handleOtherError(error, req, res, next);
   }
 }
